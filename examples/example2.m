@@ -5,7 +5,7 @@ clc; clear; close all;
 
 % Simulation parameters
 samples = 1000;         % number of points for 1D field
-realmodes = false;      % use real modes (or gaussian approximation)
+realmodes = true;      % use real modes (or gaussian approximation)
 
 % Use default AWG model
 AWG = MakeAWG(193.5);

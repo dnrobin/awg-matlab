@@ -3,12 +3,12 @@
 %--------------------------------------------------------------------------
 clc; clear; close all;
 
-% Default AWG model with 3 inputs at a pitch of 20µm offsetted by +10µm
+% Default AWG model
 AWG = MakeAWG(193.5);
 
 % Simulation parameters
 bandwidth = 70;      % simulation bandwidth [nm]
-samples   = 100;     % wavelength sample points
+samples   = 500;     % wavelength sample points
 
 % Simulate device over bandwidth
 [wl,P] = awg_Spectrum(AWG, bandwidth*1e-3, samples, ...
