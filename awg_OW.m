@@ -28,8 +28,11 @@ function [x,E,P] = awg_OW(AWG, x0, E0, lambda0, varargin)
             Ew = gaussian(x - a, AWG.H, AWG.n1, AWG.n2, lambda0, AWG.Wo);
         end
         
+        % TODO: diffraction loss (into higher orders)
+        Ldiff = 0;
+        
         % fundamental TE mode coupling
-        P(i) = overlap(x, E0, Ew);
+        P(i) = overlap(x, E0, Ew) * (1 - Ldiff);
         
         % field at ouput
         E = E + sqrt(P(i))*Ew;

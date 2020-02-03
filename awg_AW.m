@@ -29,28 +29,27 @@ function [x,E] = awg_AW(AWG, x0, E0, lambda0, varargin)
             Ew = gaussian(x - a, AWG.H, AWG.n1, AWG.n2, lambda0, AWG.Wa);
         end
         
+        % propagation length
+        deltaL = AWG.m * AWG.lambda0 / AWG.nc(AWG.lambda0);
+        Length = AWG.l0 + (i - 1) * deltaL;
+        
         % fundamental TE mode coupling
         eff = overlap(x,E0, Ew);
         
-        % cross coupling loss
+        % TODO: cross coupling loss
         Lcc = 0;
         
-        % side wall scattering losses
+        % TODO: side wall scattering losses
         Lss = 0;
         
         % absorption propagation losses
-        La = 0;
+        La = 1e-4 * Length;
         
         % total loss
         Ltot = Lcc + Lss + La;
         
-        % delay line phase shift
-        deltaL = AWG.m * AWG.lambda0 / AWG.nc(AWG.lambda0);
-        L = AWG.l0 + (i - 1) * deltaL;
-        d = exp(1i*k*L);
-        
         % field at ouput
-        E = E + sqrt(eff)*Ew*d*exp(-Ltot*L);
+        E = E + sqrt(eff) * Ew * exp(-Ltot) * exp(1i*k*Length);
         
     end
     
