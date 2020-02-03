@@ -8,7 +8,7 @@ samples = 1000;         % number of points for 1D field
 realmodes = false;      % use real modes (or gaussian approximation)
 
 % Use default AWG model
-AWG = MakeAWG(193.5, 'lo', 10, 'li', 5);
+AWG = MakeAWG(193.5);
 
 % Simulation wavelength
 lambda0 = AWG.lambda0;  % use AWG center wavelength
