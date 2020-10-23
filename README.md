@@ -1,7 +1,13 @@
 # awg-matlab v0.8
 
-Example arrayed waveguide grating (AWG) simulator as series of functional blocks for learning purposes. See the main exmaple script file for an example AWG simulation where the design parameters may be tweaked. The app provides an intuitive UI to input design parameters and obtain overall inssertion loss result.
+Arrayed waveguide grating (AWG) simulator designed as a series of functional blocks. See the example script file for an AWG simulation where the design parameters may be tweaked. The apps folder contains an installer for a self-contained app with an intuitive graphical user interface producing the overall inssertion loss spectrum from the provided design parameters.
 
----
-written by : Daniel Robin (daniel.robin.1@ulaval.ca)
-last rev. : 23 Oct 2020
+## Version history
+
+### Vesrion 0.8 (Oct 23, 2020)
+* added packaged Matlab APP
+* simplified overall project structure
+* fixed some incorrect math equations
+
+### Version 0.1 (Feb 3, 2020)
+* initial model release
