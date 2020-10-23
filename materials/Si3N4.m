@@ -1,11 +1,11 @@
 % Material Sellmeier equation for: Si3N4 @ 20?C over (0.31µm - 5.504µm)
 % https://refractiveindex.info/?shelf=main&book=Si3N4&page=Luke
 
-function n = Si3N4(x, varargin)
+function n = Si3N4(x,T)
 
-    T = 295;
-    if nargin > 1
-        T = varargin{1};
+    if nargin < 2
+        T = 295;
+    else
         warning('Temperature model is not implemented for Si3N4 material')
     end
     

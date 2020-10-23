@@ -1,2 +1,5 @@
 .DS_Store
-
+.prj
+.obj
+.o
+.a

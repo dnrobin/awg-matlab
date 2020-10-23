@@ -1,11 +1,10 @@
 % Material Sellmeier equation for: Si @ T[20K, 300K], lambda[1.1µm, 5.6µm]
 % https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20070021411.pdf
 
-function n = Si(x,varargin)
+function n = Si(x,T)
 
-    T = 295;
-    if nargin > 1
-        T = varargin{1};
+    if nargin < 2
+        T = 295;
     end
     
     if T < 20 || T > 300

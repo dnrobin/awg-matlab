@@ -1,11 +1,11 @@
 % Material Sellmeier equation for: SiO2 @ 20?C over (0.21µm - 6.7µm)
 % https://refractiveindex.info/?shelf=main&book=SiO2&page=Malitson
 
-function n = SiO2(x, varargin)
+function n = SiO2(x,T)
 
-    T = 295;
-    if nargin > 1
-        T = varargin{1};
+    if nargin < 2
+        T = 295;
+    else
         warning('Temperature model is not implemented for SiO2 material')
     end
     
