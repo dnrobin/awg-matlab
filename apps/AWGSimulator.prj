@@ -1,0 +1,69 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="3389219083" file="/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/apps/AWGSimulator.prj" location="/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/apps" name="AWGSimulator" target="target.mlapps" target-name="Package App">
+    <param.appname>AWGSimulator</param.appname>
+    <param.authnamewatermark>Daniel Robin</param.authnamewatermark>
+    <param.email>daniel.robin.1@ulaval.ca</param.email>
+    <param.company />
+    <param.icon />
+    <param.icons />
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.version>1.0</param.version>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}</param.output>
+    <param.guid>c36b0bdc-aca8-497b-9080-daf25b4d81a0</param.guid>
+    <unset>
+      <param.company />
+      <param.icon />
+      <param.icons />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.version />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}/AWGSimulator.mlapp</file>
+    </fileset.main>
+    <fileset.depfun />
+    <fileset.resources>
+      <file>/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/awg_analyse.m</file>
+      <file>/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/awg_simulate.m</file>
+      <file>/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/awg_spectrum.m</file>
+      <file>/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/functions</file>
+      <file>/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/materials</file>
+    </fileset.resources>
+    <fileset.package />
+    <build-deliverables>
+      <file location="/Users/glaaki/Documents/Maitrise/tmp/awg-matlab" name="apps" optional="false">/Users/glaaki/Documents/Maitrise/tmp/awg-matlab/apps</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2019b.app</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.14.6</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
