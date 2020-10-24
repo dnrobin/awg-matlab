@@ -4,6 +4,9 @@ Arrayed waveguide grating (AWG) simulator designed as a series of functional blo
 
 ## Version history
 
+### Version 0.8.1 (Oct 24, 2020)
+* fixed missing dependencies
+
 ### Vesrion 0.8 (Oct 23, 2020)
 * added packaged Matlab App
 * simplified overall project structure
