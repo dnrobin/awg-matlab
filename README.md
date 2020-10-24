@@ -1,6 +1,6 @@
-# awg-matlab v0.8
+# awg-matlab v0.8.1
 
-Arrayed waveguide grating (AWG) simulator designed as a series of functional blocks. See the example script file for an AWG simulation where the design parameters may be tweaked. The apps folder contains an installer for a self-contained app with an intuitive graphical user interface producing the overall inssertion loss spectrum from the provided design parameters.
+Arrayed waveguide grating (AWG) simulator for nanophotonics designed as a series of functional blocks. See the example script file for an AWG simulation where the design parameters may be tweaked. The apps folder contains an installer for a self-contained app with an intuitive graphical user interface producing the overall inssertion loss spectrum for the provided design parameters.
 
 ## Version history
 
