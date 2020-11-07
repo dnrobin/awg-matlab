@@ -12,7 +12,7 @@ The source code provided and the app GUI have been developed for Matlab version 
 
 In order to use this library, the current folder and subfolders should be on the Matlab path. To include them dynamically from code, simply add the following command to the begining of the script:
 
-```julia
+```javascript
 addpath(genpath(<relative-path-to-awg-matlab-folder>));
 ```
 
