@@ -10,9 +10,9 @@ The source code provided and the app GUI have been developed for Matlab version 
 
 ### Instructions
 
-In order to use this library, the current folder and subfolders should be on the Matlab path. To include them dynamically from code, simply add the command:
+In order to use this library, the current folder and subfolders should be on the Matlab path. To include them dynamically from code, simply add the following command to the begining of the script:
 
-```matlab
+```julia
 addpath(genpath(<relative-path-to-awg-matlab-folder>));
 ```
 
@@ -24,11 +24,11 @@ Please file any issues encountered to: github.com/dnrobin/awg-matlab/issues
 
 To contribute to the source code:
 
-. Fork a copy of the project
-. Clone that copy to your local machine
-. Make edits/contributions
-. Commit and push changes to your branch
-. Create a pull request
+* Fork a copy of the project
+* Clone that copy to your local machine
+* Make edits/contributions
+* Commit and push changes to your branch
+* Create a pull request
 
 ## Version history
 
