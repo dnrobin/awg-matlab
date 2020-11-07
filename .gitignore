@@ -1,3 +1,9 @@
+# Mac files
 .DS_Store
+.icloud
 
+# VSCode
+.vscode
+
+# Dev files
 *.prj
