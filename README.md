@@ -1,22 +1,20 @@
-# awg-matlab v0.8.1
+# awg-matlab v1.0.1
 
-Arrayed waveguide grating (AWG) simulator for nanophotonics designed as a series of functional blocks. See the example script file for an AWG simulation where the design parameters may be tweaked. The apps folder contains an installer for a self-contained app with an intuitive graphical user interface producing the overall inssertion loss spectrum for the provided design parameters.
+Arrayed waveguide grating (AWG) simulator for nanophotonics designed as a series of functional blocks in an object oriented architecture. See the example script file for an AWG simulation where the design parameters may be tweaked.
 
 ## Installation
 
 ### Dependencies
 
-The source code provided and the app GUI have been developed for Matlab version R2019b and are not guarantied to be backward compatible.
+The source code provided has been developped and tested for Matlab version R2019b and is not guarantied to be backward compatible.
 
 ### Instructions
 
-In order to use this library, the current folder and subfolders should be on the Matlab path. To include them dynamically from code, simply add the following command to the begining of the script:
+In order to use this library, the current folder and ./public folder should be on the Matlab path. To include them dynamically from code, simply add the following command to the begining of the script:
 
 ```javascript
 addpath(genpath(<relative-path-to-awg-matlab-folder>));
 ```
-
-To install the provided app GUI as a Matlab Application, simply run the AWGSimulator.mlappinstall file from within Matlab.
 
 ## Contributing
 
@@ -28,17 +26,9 @@ To contribute to the source code:
 * Clone that copy to your local machine
 * Make edits/contributions
 * Commit and push changes to your branch
-* Create a pull request
+* Create a pull request on the 'v1beta' branch
 
 ## Version history
 
-### Version 0.8.1 (Oct 24, 2020)
-* fixed missing dependencies
-
-### Vesrion 0.8 (Oct 23, 2020)
-* added packaged Matlab App
-* simplified overall project structure
-* fixed some incorrect math equations
-
-### Version 0.1 (Feb 3, 2020)
-* initial model release
+### Version 1.0.1 (Nov 24, 2020)
+* initial model v1 constructed from v0 to be fully extendible
