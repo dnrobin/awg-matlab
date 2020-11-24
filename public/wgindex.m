@@ -46,6 +46,8 @@
 
 function neff = wgindex(lambda,w,h,t,na,nc,ns,varargin)
 
+	assert(t >= 0 && t <= h, "The slab thickness parameter must be within [0, h].")
+
     p = inputParser;
     addParameter(p,'Modes', inf, @(x)length(x)==1);
     addParameter(p,'Polarisation','te',@(x)ismember(x,{'TE','te','TM','tm'}))
@@ -56,9 +58,7 @@ function neff = wgindex(lambda,w,h,t,na,nc,ns,varargin)
     if isa(ns, 'function_handle'); ns = ns(lambda); end
     if isa(nc, 'function_handle'); nc = nc(lambda); end
     if isa(na, 'function_handle'); na = na(lambda); end
-    
-    t = clamp(t, 0, h);
-    
+        
     % solve region I
     neff_I = slabindex(lambda, h, na, nc, ns, ...
         'Modes', opts.Modes, 'Polarisation', opts.Polarisation);
