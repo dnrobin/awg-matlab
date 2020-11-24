@@ -1,4 +1,4 @@
-function T = ow(def, lambda, F0, varargin)
+function T = ow(model, lambda, F0, varargin)
 %   Compute output waveguide coupling. The function is called with the 
 %   following syntax:
 %
@@ -35,18 +35,18 @@ function T = ow(def, lambda, F0, varargin)
     u0 = F0.Ex; % TODO: add proper logic for selecting the correct field components!
     P0 = F0.power;
         
-    Aperture = def.getOutputAperture();
+    Aperture = model.getOutputAperture();
     
-    T = zeros(1,def.No);
-    for i = 1:def.No
-        xc = def.lo + ((i - 1) - (def.No-1)/2) * max(def.do, def.wo);
+    T = zeros(1,model.No);
+    for i = 1:model.No
+        xc = model.lo + ((i - 1) - (model.No-1)/2) * max(model.do, model.wo);
 
         % get offset mode field
         Fk = Aperture.mode(lambda, x0 - xc, opts.ModeType);
         Ek = Fk.Ex(:);
         
         % truncate applicable coupling range
-        Ek = Ek .* rectf((x0(:) - xc)/max(def.do,def.wo));
+        Ek = Ek .* rectf((x0(:) - xc)/max(model.do,model.wo));
 
         % coupute transmission w/r to input power
         T(i) = P0 * overlap(x0, u0, Ek)^2;

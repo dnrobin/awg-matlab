@@ -1,4 +1,4 @@
-function F = fpr2(def, lambda, F0, varargin)
+function F = fpr2(model, lambda, F0, varargin)
 %   Propagates the field in the first free propagation region. The function
 %   is called with the following syntax:
 %
@@ -24,11 +24,11 @@ function F = fpr2(def, lambda, F0, varargin)
     x0 = F0.x;
     u0 = F0.Ex; % TODO: add proper logic for selecting the correct field components!
     
-    ns = def.getSlabWaveguide().index(lambda, 1);
+    ns = model.getSlabWaveguide().index(lambda, 1);
     
-    r = def.R / 2;
-    if def.confocal
-        r = def.R;
+    r = model.R / 2;
+    if model.confocal
+        r = model.R;
     end
     
     if isempty(opts.x)
@@ -38,15 +38,15 @@ function F = fpr2(def, lambda, F0, varargin)
     end
     
     % correct input phase curvature
-    a = x0 / def.R;
-    xp = def.R * tan(a);
-    dp = def.R * sec(a) - def.R;
+    a = x0 / model.R;
+    xp = model.R * tan(a);
+    dp = model.R * sec(a) - model.R;
     up = u0 .* exp(+1i*2*pi/lambda*ns*dp);  % retarded phase
 
     % cartesian coordinates
     a = s / r;
     xf = r * sin(a);
-    zf = (def.defocus + def.R - r) + r * cos(a);
+    zf = (model.defocus + model.R - r) + r * cos(a);
 
     % calculate diffraction
     u = diffract(lambda/ns,up,xp,xf,zf);

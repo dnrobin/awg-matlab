@@ -1,35 +1,38 @@
 classdef AWG < handle
-% Arrayed Waveguide Grating Class
+% Arrayed Waveguide Grating Model
 %
 % PROPERTIES:
+%     lambda_c - design center wavelength
+%     clad - top cladding material
+%     core - core (guiding) material
+%     subs - bottom cladding material, note that materials can be assigned by a
+%       string literal refering to a awg.material.* function, a function handle
+%       for computing dipersion, a lookup table, a constant value or an
+%       awg.material.Material object instance. See awg.material.Material for
+%       details.
+%     w - waveguide core width
+%     h - waveguide code height
+%     t - waveguide slab thickness (for rib waveguides) (def. 0)
+%     N - number of arrayed waveguides
+%     m - diffraction order
+%     R - grating radius of carvature (focal length)
+%     g - gap width between array apertures
+%     d - array aperture spacing
+%     L0 - minimum waveguide length offset (def. 0)
+%     Ni - number of input waveguides
+%     wi - input waveguide aperture width
+%     di - input waveguide spacing (def. 0)
+%     li - input waveguide offset spacing (def. 0)
+%     No - number of output waveguides
+%     wo - output waveguide aperture width
+%     do - output waveguide spacing (def. 0)
+%     lo - output waveguide offset spacing (def. 0)
+%     defocus - added defocus to R (def. 0)
+%     confocal - use confocal arrangement rather than Rowland (def. false)
 %
-% lambda_c - design center wavelength
-% clad - top cladding material
-% core - core (guiding) material
-% subs - bottom cladding material, note that materials can be assigned by a
-%   string literal refering to a awg.material.* function, a function handle
-%   for computing dipersion, a lookup table, a constant value or an
-%   awg.material.Material object instance. See awg.material.Material for
-%   details.
-% w - waveguide core width
-% h - waveguide code height
-% t - waveguide slab thickness (for rib waveguides) (def. 0)
-% N - number of arrayed waveguides
-% m - diffraction order
-% R - grating radius of carvature (focal length)
-% g - gap width between array apertures
-% d - array aperture spacing
-% L0 - minimum waveguide length offset (def. 0)
-% Ni - number of input waveguides
-% wi - input waveguide aperture width
-% di - input waveguide spacing (def. 0)
-% li - input waveguide offset spacing (def. 0)
-% No - number of output waveguides
-% wo - output waveguide aperture width
-% do - output waveguide spacing (def. 0)
-% lo - output waveguide offset spacing (def. 0)
-% defocus - added defocus to R (def. 0)
-% confocal - use confocal arrangement rather than Rowland (def. false)
+% CALCULATED PROPERTIES:
+%     wg - array waveguide aperture width
+%     dl - array length increment
 %
 % AUTHOR: Daniel Robin (daniel.robin.1@ulaval.ca)
 

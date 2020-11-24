@@ -1,10 +1,11 @@
 % revisions:
 %   30/10/2020 - Mathieu Walsh - fixed channel spacing calculation
 
-function results = analyse(wavelength, transmission)
+function results = analyse(results)
 % Perform analysis on output spectrum
-%
-%
+
+    wavelength = results.wavelength;
+    transmission = results.transmission;
 
     TdB = 10*log10(transmission);
 

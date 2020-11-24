@@ -21,7 +21,7 @@ function opts = SimulationOptions(varargin)
     addParameter(p, 'ModeType', 'gaussian', @(x)ismember(lower(x), ...
         {'rect','gaussian','solve'}))
 	addParameter(p, 'UseMagneticField', false, @(x)islogical(x))
-    addParameter(p, 'TaperLoss', 0, @(x)x >= 0)
+    addParameter(p, 'InsertionLoss', 0, @(x)x >= 0)
     addParameter(p, 'PropagationLoss', 0, @(x)x >= 0)
     addParameter(p, 'PhaseErrorVariance', 0, @(x)x >= 0)
     addParameter(p, 'CustomInputField', [])

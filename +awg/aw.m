@@ -1,4 +1,4 @@
-function F = aw(def, lambda, F0, varargin)
+function F = aw(model, lambda, F0, varargin)
 %   Couples input field to the array apertures and propagates the fields
 %   along the waveguide array to the other end. The function is called 
 %   with the following syntax:
@@ -23,7 +23,7 @@ function F = aw(def, lambda, F0, varargin)
     p = inputParser();
     addOptional(p, 'ModeType', 'gaussian', @(x)true)
     addParameter(p, 'PhaseErrorVar', 0);
-    addParameter(p, 'TaperLoss', 0);  % loss given in dB
+    addParameter(p, 'InsertionLoss', 0);    % loss given in dB
     addParameter(p, 'PropagationLoss', 0);  % loss given in dB/cm
     parse(p, varargin{:})
     opts = p.Results;
@@ -38,23 +38,23 @@ function F = aw(def, lambda, F0, varargin)
     P0 = F0.power;
     
     k0 = 2*pi/lambda;
-    nc = def.getArrayWaveguide().index(lambda, 1);
+    nc = model.getArrayWaveguide().index(lambda, 1);
     
     % inputs
-    pnoise = sqrt(opts.PhaseErrorVar) * randn(1, def.N);
-    tloss = 10^(-abs(opts.TaperLoss)/10);
+    pnoise = sqrt(opts.PhaseErrorVar) * randn(1, model.N);
+    iloss = 10^(-abs(opts.InsertionLoss)/10);
     
-    Aperture = def.getArrayAperture();
+    Aperture = model.getArrayAperture();
     
     Ex = zeros(length(F0.E), 1);
-    for i = 1:def.N
-        xc = ((i - 1) - (def.N - 1)/2) * def.d;
+    for i = 1:model.N
+        xc = ((i - 1) - (model.N - 1)/2) * model.d;
 
         % get mode
         Fk = Aperture.mode(lambda, x0 - xc, opts.ModeType).normalize();
         
         % truncate applicable coupling range
-        Ek = Fk.Ex(:) .* rectf((x0 - xc)/def.d)';
+        Ek = Fk.Ex(:) .* rectf((x0 - xc)/model.d)';
         
         % normalize mode field
         Ek = pnorm(Fk.x, Ek);
@@ -63,12 +63,12 @@ function F = aw(def, lambda, F0, varargin)
         t = overlap(x0, u0, Ek);
 
         % compute total phase delay
-        L = (i - 1) * def.dl + def.L0;
-        phase = (k0*nc + pnoise(i))*L;
+        L = (i - 1) * model.dl + model.L0;
+        phase = k0*nc*L + pnoise(i);
         
         % compute total losses
         ploss = 10^(-abs(opts.PropagationLoss * L*1e-4)/10);
-        t = t * ploss * tloss.^2;
+        t = t * ploss * iloss.^2;
        
         % assemble waveguide field
         Efield = P0 * t * Ek(:) * exp(-1i*phase);

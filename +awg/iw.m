@@ -1,4 +1,4 @@
-function F = iw(def, lambda, varargin)
+function F = iw(model, lambda, varargin)
 %   Generates input waveguide field distribution. The function is called 
 %   with the following syntax:
 %
@@ -59,7 +59,7 @@ function F = iw(def, lambda, varargin)
     end
     opts.ModeType = lower(opts.ModeType);
     
-	offset = def.li + (opts.Input - (def.Ni-1)/2) * max(def.di,def.wi);
+	offset = model.li + (opts.Input - (model.Ni-1)/2) * max(model.di,model.wi);
 
     if isfield(opts, 'Field')
         if isnumeric(opts.Field)
@@ -80,8 +80,8 @@ function F = iw(def, lambda, varargin)
     end
     
     % generate normalized mode field
-    x = linspace(-1/2,1/2,opts.Points)' * 2 * max(def.di, def.wi);
-    F = def.getInputAperture().mode(lambda, x, opts.ModeType);
+    x = linspace(-1/2,1/2,opts.Points)' * 2 * max(model.di, model.wi);
+    F = model.getInputAperture().mode(lambda, x, opts.ModeType);
     F.normalize();
     
     % shift coordinates to input #
