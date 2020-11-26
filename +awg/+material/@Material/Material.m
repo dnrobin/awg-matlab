@@ -154,7 +154,6 @@ classdef Material < handle
         
         function [n,lambda] = dispersion(obj, lambda1, lambda2, varargin)
         % Computes chromatic dispersion curve over wavelength range
-
             [n, lambda] = awg.dispersion(@obj.index, lambda1, lambda2, varargin{:});
         end
         
@@ -180,7 +179,6 @@ classdef Material < handle
         
         function [Ng,lambda] = groupDispersion(obj, lambda1, lambda2, varargin)
         % Compute group dispersion curve over wavelength range
-            
             [Ng, lambda] = awg.dispersion(@obj.groupindex, lambda1, lambda2, varargin{:});
         end
     end

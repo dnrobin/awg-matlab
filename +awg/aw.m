@@ -21,17 +21,17 @@ function F = aw(model, lambda, F0, varargin)
     import awg.*
     
     p = inputParser();
-    addOptional(p, 'ModeType', 'gaussian', @(x)true)
+    addOptional(p, 'ModeType', 'gaussian')
     addParameter(p, 'PhaseErrorVar', 0);
     addParameter(p, 'InsertionLoss', 0);    % loss given in dB
     addParameter(p, 'PropagationLoss', 0);  % loss given in dB/cm
     parse(p, varargin{:})
     opts = p.Results;
     
-    if ~ismember(lower(opts.ModeType), {'rect', 'gaussian', 'solve'})
+    opts.ModeType = lower(opts.ModeType);
+    if ~ismember(opts.ModeType, {'rect', 'gaussian', 'solve'})
         error("Wrong mode type '" + opts.ModeType + "'.")
     end
-    opts.ModeType = lower(opts.ModeType);
     
     x0 = F0.x;
     u0 = F0.Ex; % TODO: add proper logic for selecting the correct field components!
@@ -39,6 +39,11 @@ function F = aw(model, lambda, F0, varargin)
     
     k0 = 2*pi/lambda;
     nc = model.getArrayWaveguide().index(lambda, 1);
+    
+    % calculate phase offset for outer waveguides
+    dr = model.R * (sec(x0/model.R) - 1);
+    dp0 = 2 * k0*nc*dr;
+    u0 = u0 .* exp(-1i*dp0);
     
     % inputs
     pnoise = sqrt(opts.PhaseErrorVar) * randn(1, model.N);

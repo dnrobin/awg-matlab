@@ -25,17 +25,17 @@ function F = fpr1(model, lambda, F0, varargin)
     parse(p, varargin{:})
     opts = p.Results;
     
-    xi = F0.x;
-    ui = F0.Ex; % TODO: add proper logic for selecting the correct field components!
+    s0 = F0.x;
+    u0 = F0.Ex; % TODO: add proper logic for selecting the correct field components!
     
     % compute slab index
     ns = model.getSlabWaveguide().index(lambda, 1);
     
     % output curve coordinates
     if isempty(opts.x)
-        sf = linspace(-1/2,1/2,opts.Points)' * (model.N + 4)*model.d;
+        s = linspace(-1/2,1/2,opts.Points)' * (model.N + 4)*model.d;
     else
-        sf = opts.x(:);
+        s = opts.x(:);
     end
     
     % radii of curvature
@@ -45,24 +45,19 @@ function F = fpr1(model, lambda, F0, varargin)
         r = model.R;
     end
     
-    % intput cartesian coordinates
-    s0 = model.li + (opts.Input - (model.Ni - 1)/2)*max(model.di,model.wi);
-    t0 = s0 / r;
-    x0 = r * sin(t0);
-    z0 = r * (1 - cos(t0));
-    
     % output cartesian coordinates
-    t = sf/R;
+    t = s/R;
     x = R * sin(t);
     z = R * cos(t);
     
     % map output coordinates to local input
-    a0 = atan(sin(t0) / (1 + cos(t0)));
-    xf = (x + x0) * cos(a0) + (z + z0) * sin(a0);
-    zf = -(x + x0) * sin(a0) + (z + z0) * cos(a0);
+    si = opts.Input - model.Ni
+    t0 =  / r;
+    a0 = atan(sin(t0) / (1 + cos(t0))); % k-vector angle
     
     % diffract in local cooridnates
-    uf = diffract(lambda/ns,ui,xi,xf,zf);
+    u = diffract(lambda/ns,up,xp,xf,zf);
+    
     
 %     % correct input phase curvature
 %     a = s0 / r;
@@ -79,4 +74,4 @@ function F = fpr1(model, lambda, F0, varargin)
 %     u = diffract(lambda/ns,up,xp,xf,zf);
     
     % return normalized field
-    F = Field(sf, uf).normalize(F0.power);
+    F = Field(s, u).normalize(F0.power);

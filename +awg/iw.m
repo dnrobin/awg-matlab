@@ -8,17 +8,10 @@ function F = iw(model, lambda, varargin)
 %
 %   F = IW(AWG, lambda, INPUT) produces a the same result but with the
 %   field distribution centered at the given INPUT number. The offset is 
-%   calculated from the AWG properties 'li', 'di' and/or 'wi'.
+%   calculated from the AWG properties 'li', 'di' and/or 'wi'. INPUT must
+%   be a valid number within [0, Ni-1].
 %
-%   F = IW(__, MODE) specifies the mode type interpolation to use for the
-%   waveguide apertures. Mode may be one of:
-%   'rect'      - Uses the rectangle function over the aperture size.
-%   'gaussian'  - (default) Creates a gaussian mode from the spot size
-%                 definition over the aperture size.
-%   'solve'     - Computes an approximate mode using the effective index
-%                 method.
-%
-%   F = IW(__, U) provide custom input field data directly. The shape of U
+%   F = IW(..., U) provide custom input field data directly. The shape of U
 %   must be a 2 column vector with coordinates in the first column and,
 %   possibly complex, amplitude in the second column. For more advanced 
 %   control, it is possible to pass in a Field object with a complete 
@@ -27,6 +20,14 @@ function F = iw(model, lambda, varargin)
 %
 %   F = IW(__, NAME, VALUE) set options using one or more NAME, VALUE pairs
 %   from the following set:
+%   'ModeType'  - specifies the mode type interpolation to use for the
+%                 waveguide apertures. Mode may be one of:
+%                 'rect'      - Uses the rectangle function over the 
+%                               aperture size.
+%                 'gaussian'  - (default) Creates a gaussian mode from the 
+%                               spot size definition over the aperture size.
+%                 'solve'     - Computes an approximate mode using the 
+%                               effective index method.
 %   'Points'    - number of points to use when interpolating mode, the
 %                 default is 100.
 %
@@ -34,49 +35,48 @@ function F = iw(model, lambda, varargin)
 
     import awg.*
     
+    input = 0;
+    if ~isempty(varargin) && isnumeric(varargin{1})
+        input = varargin{1};
+        varargin(1) = [];
+    end
+    
+    if input + 1 > model.Ni
+        error("Undefined input number '" + num2str(input) + "' for AWG having " + num2str(model.Ni) + " inputs.")
+    end
+    
+    offset = model.li + (input - (model.Ni - 1)/2) * max(model.di,model.wi);
+    
+    if ~isempty(varargin)
+        if isnumeric(varargin{1})
+            u = varargin{1};
+            if isvector(u) || min(size(u)) > 2
+                error('Data provided for the input field must be a two column matrix of coordinate, value pairs.');
+            end
+            [n,m] = size(u);
+            if n < m
+                u = u';
+            end 
+            F = Field(u(:,1), u(:,2));
+            return
+        elseif isa(varargin{1}, 'awg.Field')
+            F = varargin{1};
+%             if input > 0
+%                 F.offsetCoordinates(offset, 0);
+%             end
+            return
+        end
+    end
+    
     p = inputParser();
-    addOptional(p, 'Input', 0, @(x)true)
-    addOptional(p, 'ModeType', 'gaussian', @(x)true)
+    addOptional(p, 'ModeType', 'gaussian')
     addParameter(p, 'Points', 100)
     parse(p, varargin{:})
     opts = p.Results;
     
-    if ischar(opts.Input) || isstring(opts.Input)
-        opts.ModeType = opts.Input;
-        opts.Input = 0;
-    elseif isnumeric(opts.Input) && length(opts.Input) > 1
-        opts.Field = opts.Input;
-        opts.Input = 0;
-    end
-    
-    if isnumeric(opts.ModeType) || isa(opts.ModeType, 'awg.Field')
-        opts.Field = opts.ModeType;
-        opts.ModeType = 'gaussian';
-    end
-    
-    if ~ismember(lower(opts.ModeType), {'rect', 'gaussian', 'solve'})
-        error("Wrong mode type '" + opts.ModeType + "'.")
-    end
     opts.ModeType = lower(opts.ModeType);
-    
-	offset = model.li + (opts.Input - (model.Ni-1)/2) * max(model.di,model.wi);
-
-    if isfield(opts, 'Field')
-        if isnumeric(opts.Field)
-            [n,m] = size(opts.Field);
-            if n < m
-                opts.Field = opts.Field';
-            end
-            F = Field(opts.Field(:,1), opts.Field(:,2));
-        elseif isa(opts.Field, 'awg.Field')
-            if opts.Input > 0
-                opts.Field.offsetCoordinates(offset, 0);
-            end
-            F = opts.Field;
-        else
-            error("Wrong argument provided as field.")
-        end
-        return
+    if ~ismember(opts.ModeType, {'rect', 'gaussian', 'solve'})
+        error("Wrong mode type '" + opts.ModeType + "'.")
     end
     
     % generate normalized mode field
@@ -85,4 +85,4 @@ function F = iw(model, lambda, varargin)
     F.normalize();
     
     % shift coordinates to input #
-    F.offsetCoordinates(offset, 0);
+%     F.offsetCoordinates(offset, 0);

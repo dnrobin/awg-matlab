@@ -3,8 +3,6 @@
 % This class allows representing arbitray field configurations with
 % any level of granularity, simple one-dimensional scalar data or
 % complete two-dimensional vector data.
-%
-% AUTHOR: Daniel Robin (daniel.robin.1@ulaval.ca)
 
 classdef Field < handle
     

@@ -1,8 +1,8 @@
 classdef AWG < handle
+
 % Arrayed Waveguide Grating Model
 %
-% PROPERTIES:
-%     lambda_c - design center wavelength
+% INPUT PROPERTIES:
 %     clad - top cladding material
 %     core - core (guiding) material
 %     subs - bottom cladding material, note that materials can be assigned by a
@@ -10,14 +10,15 @@ classdef AWG < handle
 %       for computing dipersion, a lookup table, a constant value or an
 %       awg.material.Material object instance. See awg.material.Material for
 %       details.
+%     lambda_c - center wavelength
 %     w - waveguide core width
-%     h - waveguide code height
+%     h - waveguide core height
 %     t - waveguide slab thickness (for rib waveguides) (def. 0)
 %     N - number of arrayed waveguides
 %     m - diffraction order
 %     R - grating radius of carvature (focal length)
-%     g - gap width between array apertures
 %     d - array aperture spacing
+%     g - gap width between array apertures
 %     L0 - minimum waveguide length offset (def. 0)
 %     Ni - number of input waveguides
 %     wi - input waveguide aperture width
@@ -27,14 +28,17 @@ classdef AWG < handle
 %     wo - output waveguide aperture width
 %     do - output waveguide spacing (def. 0)
 %     lo - output waveguide offset spacing (def. 0)
-%     defocus - added defocus to R (def. 0)
+%     df - radial defocus (def. 0)
 %     confocal - use confocal arrangement rather than Rowland (def. false)
 %
 % CALCULATED PROPERTIES:
-%     wg - array waveguide aperture width
-%     dl - array length increment
-%
-% AUTHOR: Daniel Robin (daniel.robin.1@ulaval.ca)
+%     wa - waveguide aperture width
+%     dl - waveguide length increment
+%     ns - slab index at center wavelength
+%     nc - core index at center wavelength
+%     Ng - core group index at center wavelength
+%     Ri - input/output radius curvature
+%     Ra - array radius curvature
 
     properties (SetAccess = public)
         
@@ -61,13 +65,24 @@ classdef AWG < handle
         li          {mustBeNonnegative} = 0
         lo          {mustBeNonnegative} = 0
         L0          {mustBeNonnegative} = 0
-        defocus     {mustBeNonnegative} = 0
+        df          {mustBeNonnegative} = 0
         confocal    logical             = false
     end
     
     properties (SetAccess = private)
+        ncore
+        nclad
+        nsubs
         dl
-        wg
+        wa
+        ns
+        nc
+        Ng
+        Ri
+        Ra
+        ai
+        ao
+        aa
     end
     
     methods
@@ -82,11 +97,61 @@ classdef AWG < handle
                     autoset(obj, varargin{:});
                 end
             end
-                        
-            nc = obj.getArrayWaveguide().index(obj.lambda_c, 1);
             
-            obj.wg = obj.d - obj.g;
-            obj.dl = obj.m * obj.lambda_c / nc;
+            obj.ncore = obj.core.index(obj.lambda_c);
+            obj.nclad = obj.clad.index(obj.lambda_c);
+            obj.nsubs = obj.subs.index(obj.lambda_c);
+            obj.ns = obj.getSlabWaveguide().index(obj.lambda_c, 1);
+            wg = obj.getArrayWaveguide();
+            obj.nc = wg.index(obj.lambda_c, 1);
+            obj.Ng = wg.groupindex(obj.lambda_c, 1);
+            obj.wa = obj.d - obj.g;
+            obj.dl = obj.m * obj.lambda_c / obj.nc;
+            obj.Ra = obj.R;
+            obj.Ri = obj.R / 2;
+            if obj.confocal
+                obj.Ri = obj.Ra;
+            end
+            obj.ai = obj.di / obj.Ri;
+            obj.ao = obj.do / obj.Ri;
+            obj.aa = obj.d / obj.Ra;
+        end
+        
+        function print(obj)
+            list = {obj.Ni,'','N inputs'
+                    obj.No,'','N outputs'
+                    obj.lambda_c*1e3,'nm','Center wavelength'
+                    obj.nclad,'','Cladding index'
+                    obj.ncore,'','Core index'
+                    obj.nsubs,'','Substrate index'
+                    obj.m,'','Diffraction order'
+                    obj.N,'','Number of waveguides'
+                    obj.dl,'um','Length increment'
+                    obj.L0,'um','Minimum length'
+                    obj.w,'um','Waveguide width'
+                    obj.nc,'','Waveguide index'
+                    obj.ns,'','Slab index'
+                    obj.h,'um','Thickness'
+                    obj.d,'um','Aperture spacing'
+                    obj.g,'um','Aperture gap width'
+                    obj.Ra,'um','Focal length'
+                    obj.df,'um','Defocus'
+                    obj.Ri,'um','I/O radius of curvature'
+                    obj.wi,'um','Input waveguide width'
+                    obj.wo,'um','Output waveguide width'
+                    obj.di,'um','Input spacing'
+                    obj.do,'um','Output spacing'
+                    obj.li,'um','Input shift offset'
+                    obj.lo,'um','Output shift offset'};
+            
+            maxlen = max(strlength(list(:,3))) + 5;
+            disp(repmat(' ',1,maxlen) + "Value")
+            disp(repmat(' ',1,maxlen) + "----------")
+            for k = 1:size(list,1)
+                desc = list{k,3};
+                value = num2str(list{k,1}) + " " + list{k,2};
+                fprintf("%s%s%s\n", desc, repmat(' ',1,maxlen-strlength(desc)), value)
+            end
         end
         
         function set.clad(obj, clad)
@@ -139,7 +204,7 @@ classdef AWG < handle
                 "clad", obj.clad
                 "core", obj.core
                 "subs", obj.subs
-                "w", obj.wg
+                "w", obj.wa
                 "h", obj.h
             });
         end

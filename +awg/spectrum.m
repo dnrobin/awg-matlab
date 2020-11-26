@@ -1,6 +1,9 @@
 function Results = spectrum(model, lambda, bandwidth, varargin)
-% Simulate entire AWG device over wavelength range and extract transmission
+%   Simulate entire AWG device over wavelength range and extract
+%   transmission spectrum of each output channel.
 %
+%   Results = SPECTRUM(model, center_wavelength, bandwidth)
+
     import awg.*
 
     p = inputParser;
@@ -16,7 +19,7 @@ function Results = spectrum(model, lambda, bandwidth, varargin)
 
     % calculate transmission data
     T = zeros(opts.Samples,model.No);
-    f = waitbar(0);
+    f = waitbar(0,'Progress...');
     for i = 1:opts.Samples
         if ~isvalid(f)
             warning("Computation was aborted by user...");

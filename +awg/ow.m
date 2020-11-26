@@ -22,14 +22,14 @@ function T = ow(model, lambda, F0, varargin)
     import awg.*
     
     p = inputParser();
-    addOptional(p, 'ModeType', 'gaussian', @(x)true)
+    addOptional(p, 'ModeType', 'gaussian')
     parse(p, varargin{:})
     opts = p.Results;
    
-    if ~ismember(lower(opts.ModeType), {'rect', 'gaussian', 'solve'})
+    opts.ModeType = lower(opts.ModeType);
+    if ~ismember(opts.ModeType, {'rect', 'gaussian', 'solve'})
         error("Wrong mode type '" + opts.ModeType + "'.")
     end
-    opts.ModeType = lower(opts.ModeType);
     
     x0 = F0.x;
     u0 = F0.Ex; % TODO: add proper logic for selecting the correct field components!
