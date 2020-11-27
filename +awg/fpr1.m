@@ -45,38 +45,19 @@ function F = fpr1(model, lambda, F0, varargin)
         r = model.R;
     end
     
-    % intput cartesian coordinates
-    s0 = model.li + (opts.Input - (model.Ni - 1)/2)*max(model.di,model.wi);
-    t0 = s0 / r;
-    x0 = r * sin(t0);
-    z0 = r * (1 - cos(t0));
-    
-    % output cartesian coordinates
-    t = sf/R;
-    x = R * sin(t);
-    z = R * cos(t);
-    
-    % map output coordinates to local input
-    a0 = atan(sin(t0) / (1 + cos(t0)));
-    xf = (x + x0) * cos(a0) + (z + z0) * sin(a0);
-    zf = -(x + x0) * sin(a0) + (z + z0) * cos(a0);
-    
-    % diffract in local cooridnates
+    % correct input phase curvature
+    a = xi / r;
+    xp = r * tan(a);
+    dp = r * sec(a) - r;
+    up = ui .* exp(+1i*2*pi/lambda*ns*dp);  % retard phase
+
+    % cartesian coordinates
+    a = sf / model.R;
+    xf = model.R * sin(a);
+    zf = model.R * cos(a);
+
+    % calculate diffraction
     uf = diffract(lambda/ns,ui,xi,xf,zf);
-    
-%     % correct input phase curvature
-%     a = s0 / r;
-%     xp = r * tan(a);
-%     dp = r * sec(a) - r;
-%     up = u0 .* exp(+1i*2*pi/lambda*ns*dp);  % retard phase
-% 
-%     % cartesian coordinates
-%     a = s / model.R;
-%     xf = model.R * sin(a);
-%     zf = model.defocus + model.R * cos(a);
-% 
-%     % calculate diffraction
-%     u = diffract(lambda/ns,up,xp,xf,zf);
     
     % return normalized field
     F = Field(sf, uf).normalize(F0.power);

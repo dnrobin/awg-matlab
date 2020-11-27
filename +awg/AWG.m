@@ -37,6 +37,7 @@ classdef AWG < handle
 %     ns - slab index at center wavelength
 %     nc - core index at center wavelength
 %     Ng - core group index at center wavelength
+%     Na - alias for the number of arrayed waveguides N
 %     Ri - input/output radius curvature
 %     Ra - array radius curvature
 
@@ -83,6 +84,7 @@ classdef AWG < handle
         ai
         ao
         aa
+        Na
     end
     
     methods
@@ -97,6 +99,9 @@ classdef AWG < handle
                     autoset(obj, varargin{:});
                 end
             end
+            
+            obj.di = max(obj.di, obj.wi);   % prevent user mistakes
+            obj.do = max(obj.do, obj.wo);
             
             obj.ncore = obj.core.index(obj.lambda_c);
             obj.nclad = obj.clad.index(obj.lambda_c);
@@ -115,6 +120,7 @@ classdef AWG < handle
             obj.ai = obj.di / obj.Ri;
             obj.ao = obj.do / obj.Ri;
             obj.aa = obj.d / obj.Ra;
+            obj.Na = obj.N;
         end
         
         function print(obj)

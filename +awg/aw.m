@@ -41,22 +41,22 @@ function F = aw(model, lambda, F0, varargin)
     nc = model.getArrayWaveguide().index(lambda, 1);
     
     % calculate phase offset for outer waveguides
-    dr = model.R * (sec(x0/model.R) - 1);
-    dp0 = 2 * k0*nc*dr;
-    u0 = u0 .* exp(-1i*dp0);
-    
+%     dr = model.R * (sec(x0/model.R) - 1);
+%     dp0 = 2 * k0*nc*dr;
+%     u0 = u0 .* exp(-1i*dp0);
+
     % inputs
     pnoise = sqrt(opts.PhaseErrorVar) * randn(1, model.N);
     iloss = 10^(-abs(opts.InsertionLoss)/10);
     
     Aperture = model.getArrayAperture();
     
-    Ex = zeros(length(F0.E), 1);
+    Ex = 0;
     for i = 1:model.N
         xc = ((i - 1) - (model.N - 1)/2) * model.d;
 
         % get mode
-        Fk = Aperture.mode(lambda, x0 - xc, opts.ModeType).normalize();
+        Fk = Aperture.mode(lambda, x0 - xc, opts.ModeType);
         
         % truncate applicable coupling range
         Ek = Fk.Ex(:) .* rectf((x0 - xc)/model.d)';
@@ -81,5 +81,5 @@ function F = aw(model, lambda, F0, varargin)
         % combine to total field
         Ex = Ex + Efield;
     end
-    
+
     F = Field(x0, Ex);

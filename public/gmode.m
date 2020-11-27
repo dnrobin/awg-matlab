@@ -16,7 +16,7 @@ function [E,H,x] = gmode(lambda, W, H, nclad, ncore, varargin)
         x = opts.x(:);
     end
     
-    V = 2*pi/lambda * sqrt(ncore^1 - nclad^2);
+    V = 2*pi/lambda * sqrt(ncore^2 - nclad^2);
     
     w  = 1/sqrt(W) * (opts.VCoef(1)*W^(3/2) + opts.VCoef(2)./V.^(3/2));
     h  = 1/sqrt(H) * (opts.VCoef(1)*H^(3/2) + opts.VCoef(2)./V.^(3/2));

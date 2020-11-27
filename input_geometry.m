@@ -105,6 +105,14 @@ xo = 3;
     % draw some markers
     plot([0,r,R,s0z,z0,z1],[0,0,0,s0x,x0,x1],'k.','MarkerSize',18)
 
+[xf,zf] = dealx(ILocalToWorld \ [xp1-x0; zp1-z0]);
+
+    % plot x, z components projected on local axes
+    [xx0,zz0] = dealx(ILocalToWorld * [0;zf] + [x0;z0]);
+    plot([z0,zz0],[x0,xx0],'r')
+    [xx1,zz1] = dealx(ILocalToWorld * [xf;zf] + [x0;z0]);
+    plot([zz0,zz1],[xx0,xx1],'r')
+    
 axis image
 
 
