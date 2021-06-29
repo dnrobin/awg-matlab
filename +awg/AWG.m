@@ -1,6 +1,5 @@
 classdef AWG < handle
-
-% Arrayed Waveguide Grating Model
+% Arrayed Waveguide Grating Parameters
 %
 % INPUT PROPERTIES:
 %     clad - top cladding material
@@ -32,23 +31,23 @@ classdef AWG < handle
 %     confocal - use confocal arrangement rather than Rowland (def. false)
 %
 % CALCULATED PROPERTIES:
+%     ncore - core layer index at center wavelength
+%     nclad - top cladding layer index at center wavelength
+%     nsubs - bottom cladding layer index at center wavelength
 %     wa - waveguide aperture width
 %     dl - waveguide length increment
-%     ns - slab index at center wavelength
-%     nc - core index at center wavelength
-%     Ng - core group index at center wavelength
-%     Na - alias for the number of arrayed waveguides N
-%     Ri - input/output radius curvature
-%     Ra - array radius curvature
+%     ns - slab effective index at center wavelength
+%     nc - waveguide effective index at center wavelength
+%     Ng - waveguide group index at center wavelength
+%     Ri - input radius of curvature (R/2 when Rowland)
+%     Ro - output radius of curvature (R/2 when Rowland)
+%     Ra - array radius of curvature (alias for R)
 
-    properties (SetAccess = public)
-        
-        % TODO: Update readonly properties upon property change!
-        
+    properties (SetObservable, AbortSet)
         lambda_c    {mustBePositive}    = 1.550
-        clad                            = awg.material.Material('SiO2')
-        core                            = awg.material.Material('Si')
-        subs                            = awg.material.Material('SiO2')
+        clad                            = 'SiO2'
+        core                            = 'Si'
+        subs                            = 'SiO2'
         w           {mustBePositive}    = 0.450
         h           {mustBePositive}    = 0.220
         t           {mustBeNonnegative} = 0;
@@ -63,14 +62,14 @@ classdef AWG < handle
         wo          {mustBePositive}    = 1.200
         di          {mustBeNonnegative} = 0.000 
         do          {mustBeNonnegative} = 3.600
-        li          {mustBeNonnegative} = 0
-        lo          {mustBeNonnegative} = 0
+        li                              = 0
+        lo                              = 0
         L0          {mustBeNonnegative} = 0
         df          {mustBeNonnegative} = 0
         confocal    logical             = false
     end
     
-    properties (SetAccess = private)
+    properties
         ncore
         nclad
         nsubs
@@ -80,17 +79,35 @@ classdef AWG < handle
         nc
         Ng
         Ri
+        Ro
         Ra
-        ai
-        ao
-        aa
-        Na
     end
     
+%     methods (Access = private)
+%         function recalculate(obj)
+%             obj.ncore = obj.core.index(object.lambda_c);
+%             obj.nclad = obj.clad.index(object.lambda_c);
+%             obj.nsubs = obj.subs.index(object.lambda_c);
+%             
+%             obj.ns = obj.getSlabWaveguide().index(obj.lambda_c);
+%             obj.nc = obj.getArrayWaveguide().index(obj.lambda_c);
+%             obj.Ng = obj.getArrayWaveguide().groupindex(obj.lambda_c);
+%             
+%             obj.Ra = obj.R;
+%             if obj.confocal
+%                 obj.Ri = obj.Ra;
+%                 obj.Ro = obj.Ra;
+%             else
+%                 obj.Ri = obj.Ra / 2;
+%                 obj.Ro = obj.Ra / 2;
+%             end
+%             
+%             obj.dl = obj.m * obj.lambda_c / obj.nc;
+%         end
+%     end
+    
     methods
-        
         function obj = AWG(varargin)
-            
             if nargin > 0
                 if iscell(varargin{1})
                     a = (varargin{1})';
@@ -100,18 +117,18 @@ classdef AWG < handle
                 end
             end
             
+            obj.recalculate()
+        end
+        
+        function recalculate(obj)
             obj.di = max(obj.di, obj.wi);   % prevent user mistakes
             obj.do = max(obj.do, obj.wo);
             
             obj.ncore = obj.core.index(obj.lambda_c);
             obj.nclad = obj.clad.index(obj.lambda_c);
             obj.nsubs = obj.subs.index(obj.lambda_c);
-            obj.ns = obj.getSlabWaveguide().index(obj.lambda_c, 1);
-            wg = obj.getArrayWaveguide();
-            obj.nc = wg.index(obj.lambda_c, 1);
-            obj.Ng = wg.groupindex(obj.lambda_c, 1);
+            
             obj.wa = obj.d - obj.g;
-            obj.dl = obj.m * obj.lambda_c / obj.nc;
             obj.Ra = obj.R;
             obj.Ri = obj.R / 2;
             if obj.confocal
@@ -121,6 +138,20 @@ classdef AWG < handle
             obj.ao = obj.do / obj.Ri;
             obj.aa = obj.d / obj.Ra;
             obj.Na = obj.N;
+            
+            % precalculate slab dispersion
+            [l0,ns] = obj.getSlabWaveguide().dispersion(obj.lambda_c - .1, obj.lambda_c + .1);
+            obj.ns = awg.DispersionModel([l0(:),ns(:)]);
+            
+            % precalculate core dispersion
+            [l0,nc] = obj.getArrayWaveguide().dispersion(obj.lambda_c - .1, obj.lambda_c + .1);
+            obj.nc = awg.DispersionModel([l0(:),nc(:)]);
+            
+            % precalculate group index
+            obj.Ng = obj.getArrayWaveguide().groupindex(obj.lambda_c, 1);
+            
+            % length increment
+            obj.dl = obj.m * obj.lambda_c / obj.nc.index(obj.lambda_c);
         end
         
         function print(obj)
@@ -161,17 +192,17 @@ classdef AWG < handle
         end
         
         function set.clad(obj, clad)
-            validateattributes(clad,{'char','string','numeric','function_handle','awg.material.Material'},{})
+            validateattributes(clad,{'char','string','numeric','function_handle','awg.DispersionModel'},{})
             obj.clad = awg.material.Material(clad);
         end
         
         function set.core(obj, core)
-            validateattributes(core,{'char','string','numeric','function_handle','awg.material.Material'},{})
+            validateattributes(core,{'char','string','numeric','function_handle','awg.DispersionModel'},{})
             obj.core = awg.material.Material(core);
         end
         
         function set.subs(obj, subs)
-            validateattributes(subs,{'char','string','numeric','function_handle','awg.material.Material'},{})
+            validateattributes(subs,{'char','string','numeric','function_handle','awg.DispersionModel'},{})
             obj.subs = awg.material.Material(subs);
         end
     end
@@ -222,6 +253,12 @@ classdef AWG < handle
                 "w", obj.wo
                 "h", obj.h
             });
+        end
+    end
+    
+    methods (Static)
+        function handlePropertyChange(src, event)
+            src.Object.recalculate()
         end
     end
 end

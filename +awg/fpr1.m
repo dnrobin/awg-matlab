@@ -28,8 +28,8 @@ function F = fpr1(model, lambda, F0, varargin)
     xi = F0.x;
     ui = F0.Ex; % TODO: add proper logic for selecting the correct field components!
     
-    % compute slab index
-    ns = model.getSlabWaveguide().index(lambda, 1);
+    % get slab index
+    ns = model.ns.index(lambda);
     
     % output curve coordinates
     if isempty(opts.x)

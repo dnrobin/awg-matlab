@@ -45,7 +45,7 @@ function F = iw(model, lambda, varargin)
         error("Undefined input number '" + num2str(input) + "' for AWG having " + num2str(model.Ni) + " inputs.")
     end
     
-    offset = model.li + (input - (model.Ni - 1)/2) * max(model.di,model.wi);
+    offset = -model.li + (input - (model.Ni - 1)/2) * max(model.di,model.wi);
     
     if ~isempty(varargin)
         if isnumeric(varargin{1})
@@ -61,9 +61,9 @@ function F = iw(model, lambda, varargin)
             return
         elseif isa(varargin{1}, 'awg.Field')
             F = varargin{1};
-%             if input > 0
-%                 F.offsetCoordinates(offset, 0);
-%             end
+            if input > 0
+                F.offsetCoordinates(offset, 0);
+            end
             return
         end
     end
@@ -85,4 +85,4 @@ function F = iw(model, lambda, varargin)
     F.normalize();
     
     % shift coordinates to input #
-%     F.offsetCoordinates(offset, 0);
+    F.offsetCoordinates(offset, 0);

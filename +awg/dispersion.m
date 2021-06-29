@@ -1,8 +1,8 @@
-function [n,lambda] = dispersion(model, lambda1, lambda2, varargin)
+function [lambda,n] = dispersion(model, lambda1, lambda2, varargin)
 
 %DISPERSION  Plots field data.
 %
-%   [n, lambda] = DISPERSION(model, lambda1, lambda2) returns the 
+%   [lambda,n] = DISPERSION(model, lambda1, lambda2) returns the 
 %   refractive index as a function of wavelength over the range [lambda1,
 %   lambda2].
 %

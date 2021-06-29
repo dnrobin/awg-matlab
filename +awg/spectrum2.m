@@ -14,7 +14,12 @@ function Results = spectrum2(model, lambda, bandwidth, varargin)
     end
     
     % generate simulation wavelengths
-    wvl = lambda + linspace(-1/2,+1/2,opts.Samples) * bandwidth;
+    if bandwidth > lambda
+        wvl = linspace(lambda,bandwidth,opts.Samples);
+    else
+        wvl = lambda + linspace(-1/2,+1/2,opts.Samples) * bandwidth;
+    end
+
 
     % calculate transmission data
     T = zeros(opts.Samples,model.No,model.Ni);

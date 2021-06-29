@@ -2,11 +2,11 @@ clear; clc;
 
 global model
 
-model = awg.AWG('Ni',15,'No',5,'R',50,'d',1,'g',.5,'df',0,'di',3,'di',3,'confocal',true);
+model = awg.AWG('Ni',15,'No',5,'R',50,'d',1,'g',.5,'df',0,'di',3,'di',3,'confocal',false);
 
 params = struct();
-params.in = 0;
-params.an = 0;
+params.in = 10;
+params.an = 40;
 params.on = 0;
 params.xi = 3;
 params.xa = 0;
@@ -14,7 +14,7 @@ params.xo = 3;
 
 animator = anim.Animator(@render,params);
 animator.framesPerSecond = 30;
-animator.addAnimation(@update, 0, 4*pi);
+animator.addAnimation(@update, 0, 4*pi*0);
 animator.run()
 
 function frame = render(params); global model

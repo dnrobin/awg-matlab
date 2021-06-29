@@ -1,5 +1,6 @@
 % revisions:
 %   30/10/2020 - Mathieu Walsh - fixed channel spacing calculation
+%   29/11/2020 - Mathieu Walsh - fixed non-adjacent crosstalk calculation
 
 function results = analyse(results)
 % Perform analysis on output spectrum
@@ -16,7 +17,7 @@ function results = analyse(results)
     IL = abs(max(TdB(:,center_channel)));
 
     % 10dB bandwidth
-    t0 = TdB(:,center_channel) - IL;
+    t0 = TdB(:,center_channel) + IL;
     ic = find(t0 == max(t0), 1);
     ia = find(t0(1:ic) < -10,1,'last');
     ib = ic + find(t0(ic:end) < -10,1,'first');
@@ -54,7 +55,7 @@ function results = analyse(results)
         % Non-Adjacent Crosstalk
         XTn = -100;
         for i = 1:num_channels
-            if i ~= center_channel
+            if i ~= center_channel &&  i ~= (center_channel - 1) && (i ~= center_channel + 1)
                 xt = max(TdB(ia:ib,i));
                 XTn = max(XTn, xt);
             end
@@ -82,7 +83,7 @@ function results = analyse(results)
     end
 
     % create table
-    results = table([IL; NU; CS; BW; BW3; XT; XTn], 'RowNames', ...
+    results = table([IL; NU; CS; BW3; BW; XT; XTn], 'RowNames', ...
         {
             'Insertion loss (dB)'
             'Loss non-uniformity (dB)'

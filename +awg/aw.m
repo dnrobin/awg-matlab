@@ -38,12 +38,7 @@ function F = aw(model, lambda, F0, varargin)
     P0 = F0.power;
     
     k0 = 2*pi/lambda;
-    nc = model.getArrayWaveguide().index(lambda, 1);
-    
-    % calculate phase offset for outer waveguides
-%     dr = model.R * (sec(x0/model.R) - 1);
-%     dp0 = 2 * k0*nc*dr;
-%     u0 = u0 .* exp(-1i*dp0);
+    nc = model.nc.index(lambda);
 
     % inputs
     pnoise = sqrt(opts.PhaseErrorVar) * randn(1, model.N);
@@ -66,10 +61,13 @@ function F = aw(model, lambda, F0, varargin)
 
         % coupute coupling efficiency (amplitude)
         t = overlap(x0, u0, Ek);
+        
+        % compute total length
+        L = (i - 1) * model.dl + model.L0;
 
         % compute total phase delay
-        L = (i - 1) * model.dl + model.L0;
-        phase = k0*nc*L + pnoise(i);
+        phase0 = angle(u0(find(x0 >= xc, 1)));
+        phase = phase0 + k0*nc*L + pnoise(i);
         
         % compute total losses
         ploss = 10^(-abs(opts.PropagationLoss * L*1e-4)/10);

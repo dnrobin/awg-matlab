@@ -3,6 +3,8 @@ function Results = spectrum(model, lambda, bandwidth, varargin)
 %   transmission spectrum of each output channel.
 %
 %   Results = SPECTRUM(model, center_wavelength, bandwidth)
+%
+%   Results = SPECTRUM(model, min_wavelength, max_wavelength)
 
     import awg.*
 
@@ -15,7 +17,11 @@ function Results = spectrum(model, lambda, bandwidth, varargin)
     opts = p.Results;
     
     % generate simulation wavelengths
-    wvl = lambda + linspace(-1/2,+1/2,opts.Samples) * bandwidth;
+    if bandwidth > lambda
+        wvl = linspace(lambda,bandwidth,opts.Samples);
+    else
+        wvl = lambda + linspace(-1/2,+1/2,opts.Samples) * bandwidth;
+    end
 
     % calculate transmission data
     T = zeros(opts.Samples,model.No);

@@ -24,7 +24,8 @@ function F = fpr2(model, lambda, F0, varargin)
     xi = F0.x;
     ui = F0.Ex; % TODO: add proper logic for selecting the correct field components!
     
-    ns = model.getSlabWaveguide().index(lambda, 1);
+    % get slab index
+    ns = model.ns.index(lambda);
     
     R = model.R;
     r = R / 2;
@@ -33,7 +34,7 @@ function F = fpr2(model, lambda, F0, varargin)
     end
     
     if isempty(opts.x)
-        sf = linspace(-1/2,1/2,opts.Points)' * (model.No + 4) * max(model.do,model.wo);
+        sf = model.lo + linspace(-1/2,1/2,opts.Points)' * (model.No + 4) * max(model.do,model.wo);
     else
         sf = opts.x(:);
     end
@@ -43,14 +44,11 @@ function F = fpr2(model, lambda, F0, varargin)
     xp = model.R * tan(a);
     dp = model.R * sec(a) - model.R;
     up = ui .* exp(+1i*2*pi/lambda*ns*dp);  % retarded phase
-    
-%     xp = x0;
-%     up = u0;
 
     % cartesian coordinates
     a = sf / r;
     xf = r * sin(a);
-    zf = (model.R - r) + r * cos(a);
+    zf = (R - r) + r * cos(a);
     
     uf = diffract(lambda/ns,up,xp,xf,zf);
     

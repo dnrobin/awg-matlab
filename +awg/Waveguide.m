@@ -60,7 +60,7 @@ classdef Waveguide < handle
     
     methods
         function neff = index(obj, lambda, varargin)
-            modes = inf;
+            modes = 1;
             if nargin > 2
                 modes = varargin{1};
             end
@@ -68,17 +68,17 @@ classdef Waveguide < handle
             n1 = obj.core.index(lambda);
             n2 = obj.clad.index(lambda);
             n3 = obj.subs.index(lambda);
-            neff = wgindex(lambda, obj.w, obj.h, obj.t, ...
-                n2, n1, n3, 'Modes', modes);
+            neff = eim_index(lambda, obj.w, obj.h, obj.t, ...
+                n2, n1, n3, 'N', modes);
         end
         
-        function [n,lambda] = dispersion(obj, lambda1, lambda2, varargin)
+        function [lambda,n] = dispersion(obj, lambda1, lambda2, varargin)
         % Computes chromatic dispersion curve over wavelength range
-            [n, lambda] = awg.dispersion(@obj.index, lambda1, lambda2, varargin{:});
+            [lambda,n] = awg.dispersion(@obj.index, lambda1, lambda2, varargin{:});
         end
         
         function Ng = groupindex(obj, lambda, varargin)
-            modes = inf;
+            modes = 1;
             if nargin > 2
                 modes = varargin{1};
             end
@@ -90,9 +90,9 @@ classdef Waveguide < handle
             Ng = n - lambda .* (n1 - n2) / .02;
         end
         
-        function [Ng,lambda] = groupDispersion(obj, lambda1, lambda2, varargin)
+        function [lambda,Ng] = groupDispersion(obj, lambda1, lambda2, varargin)
         % Compute group dispersion curve over wavelength range
-            [Ng, lambda] = awg.dispersion(@obj.groupindex, lambda1, lambda2, varargin{:});
+            [lambda,Ng] = awg.dispersion(@obj.groupindex, lambda1, lambda2, varargin{:});
         end
         
         function F = mode(obj,lambda,varargin)
